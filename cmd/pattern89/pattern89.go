@@ -55,12 +55,14 @@ func main() {
 		// Search for the pattern in the chunk.
 		if pos := pattern89.FindPattern(buffer[:bytesRead], pattern); pos != -1 {
 			fmt.Printf("Pattern found at offset: %08X\n", offset+int64(pos))
-			return
+			//return
+			offset += int64(pos) + 1
+		} else {
+			// Move the offset to the beginning of the next chunk
+			// (keeping some overlap to account for patterns that might be split across chunks).
+			offset += int64(bytesRead) - int64(pattern.Length())
 		}
 
-		// Move the offset to the beginning of the next chunk
-		// (keeping some overlap to account for patterns that might be split across chunks).
-		offset += int64(bytesRead) - int64(pattern.Length())
 		if bytesRead < chunkSize {
 			break
 		}
